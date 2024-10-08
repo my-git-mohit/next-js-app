@@ -3,49 +3,64 @@ name: Integration
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main # or your default branch
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm i
-    - run: npm run build
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-  unit-test:
+      # Step 2: Set up the environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20' # specify your Node.js version
 
-    runs-on: ubuntu-latest
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm i
+      # step 4 Build
+      - name:
+        run: npm build
+      # Step 5: Run tests
+      - name: Run tests
+        run: npm run test
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: build # ensures the deploy job runs after the build job
+  #   steps:
+  #     # Step 1: Checkout code
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm i
-    - run: npm run test
+  #     # Step 2: Set up Node.js (again for deployment environment)
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
 
+  #     # Step 3: Install dependencies (again in the deployment environment)
+  #     - name: Install dependencies
+  #       run: npm install
 
-
-# this is new build
+  #     # Step 4: Deploy to the server via SSH
+  #     - name: Deploy to Server
+  #       run: |
+  #         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+  #           cd /path/to/your/project
+  #           git pull origin main
+  #           npm install
+  #           npm run build # if you have a build step, otherwise skip
+  #           pm2 restart all # or your preferred process manager
+  #         EOF
+  #       env:
+  #         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
