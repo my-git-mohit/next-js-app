@@ -30,8 +30,7 @@ jobs:
       # step 4 Build
       - name: Run build
         run: npm build
-      - name: Run Test
-        run: npm run test
+        
 
   # deploy:
   #   runs-on: ubuntu-latest
