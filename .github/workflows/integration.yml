@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # specify your Node.js version
+          node-version: '20.x' # specify your Node.js version
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -30,7 +30,7 @@ jobs:
       # step 4 Build
       - name: Run build
         run: npm build
-        
+
 
   # deploy:
   #   runs-on: ubuntu-latest
