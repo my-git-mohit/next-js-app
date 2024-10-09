@@ -1,5 +1,5 @@
 
-name: Integration
+name: Integrations
 
 on:
   push:
